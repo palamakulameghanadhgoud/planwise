@@ -164,7 +164,6 @@ planwise/
 ## 🎨 Design Philosophy
 
 ### Branding & UX
-- **Slick Interface**: Dark theme with calm visuals
 - **Smart Feature Names**: "Zen Sprint Mode", "Sleep Sync", "Mission Reactor"
 - **Intuitive Navigation**: Bottom navigation for mobile-first experience
 - **Responsive Design**: Works seamlessly on desktop, tablet, and mobile
@@ -261,7 +260,7 @@ For issues, questions, or suggestions, please open an issue on GitHub.
 
 ---
 
-**Made with ❤️ for students who want to achieve more while staying balanced**
+
 
 **PlanWise** - Plan Smarter, Live Better 🎯
 
