@@ -43,7 +43,6 @@ PlanWise is a personalized productivity app designed specifically for students. 
 ### 😴 Sleep Debt Management
 - Track daily sleep manually or sync with devices
 - AI calculates cumulative sleep debt
-- Burnout risk warnings
 - Automatic task adjustment based on rest levels
 
 ### 🔔 Contextual Notifications
