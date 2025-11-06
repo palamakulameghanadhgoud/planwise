@@ -43,8 +43,9 @@ services:
         sync: false
 
   # Frontend Static Site
-  - type: static
+  - type: web
     name: planwise-frontend
+    env: static
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     pullRequestPreviewsEnabled: true
