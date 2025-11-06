@@ -1,0 +1,267 @@
+-- PlanWise Mock SQL Data
+-- This file contains sample SQL commands to populate a SQL database with mock data
+-- Note: Your current app uses MongoDB, but this can be used for reference or migration
+
+-- ============================================
+-- CREATE TABLES
+-- ============================================
+
+CREATE TABLE users (
+    id VARCHAR(50) PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    username VARCHAR(100) UNIQUE NOT NULL,
+    full_name VARCHAR(255),
+    hashed_password VARCHAR(255) NOT NULL,
+    bio TEXT,
+    profile_picture VARCHAR(500),
+    total_points INT DEFAULT 0,
+    current_streak INT DEFAULT 0,
+    longest_streak INT DEFAULT 0,
+    level INT DEFAULT 1,
+    preferred_deep_work_start INT DEFAULT 9,
+    preferred_deep_work_end INT DEFAULT 12,
+    daily_sleep_goal FLOAT DEFAULT 8.0,
+    oauth_provider VARCHAR(50),
+    oauth_id VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE tasks (
+    id VARCHAR(50) PRIMARY KEY,
+    user_id VARCHAR(50) NOT NULL,
+    title VARCHAR(500) NOT NULL,
+    description TEXT,
+    category VARCHAR(50) DEFAULT 'other',
+    priority VARCHAR(20) DEFAULT 'medium',
+    estimated_duration INT DEFAULT 30,
+    actual_duration INT,
+    cognitive_load INT DEFAULT 5,
+    is_deep_work BOOLEAN DEFAULT FALSE,
+    completed BOOLEAN DEFAULT FALSE,
+    completed_at TIMESTAMP,
+    order_index INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE sleep_logs (
+    id VARCHAR(50) PRIMARY KEY,
+    user_id VARCHAR(50) NOT NULL,
+    date DATE NOT NULL,
+    hours_slept FLOAT NOT NULL,
+    sleep_quality INT CHECK (sleep_quality >= 1 AND sleep_quality <= 5),
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE user_skills (
+    id VARCHAR(50) PRIMARY KEY,
+    user_id VARCHAR(50) NOT NULL,
+    skill_name VARCHAR(100) NOT NULL,
+    category VARCHAR(50) NOT NULL,
+    total_hours FLOAT DEFAULT 0,
+    level INT DEFAULT 1,
+    last_practiced TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE achievements (
+    id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    icon VARCHAR(100),
+    category VARCHAR(50),
+    points INT DEFAULT 0,
+    requirement TEXT
+);
+
+CREATE TABLE user_achievements (
+    id VARCHAR(50) PRIMARY KEY,
+    user_id VARCHAR(50) NOT NULL,
+    achievement_id VARCHAR(50) NOT NULL,
+    unlocked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (achievement_id) REFERENCES achievements(id) ON DELETE CASCADE
+);
+
+CREATE TABLE campus_events (
+    id VARCHAR(50) PRIMARY KEY,
+    title VARCHAR(500) NOT NULL,
+    description TEXT,
+    location VARCHAR(255),
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+    category VARCHAR(50),
+    organizer VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================
+-- INSERT MOCK DATA - USERS
+-- ============================================
+
+INSERT INTO users (id, email, username, full_name, hashed_password, bio, total_points, current_streak, longest_streak, level, preferred_deep_work_start, preferred_deep_work_end, daily_sleep_goal, created_at) VALUES
+('user001', 'meghanadh@university.edu', 'meghanadh', 'Meghanadh', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5lk7yP5B2RzGi', 'CS major | Coffee enthusiast ☕ | Always learning 📚', 2850, 15, 28, 5, 8, 11, 7.5, '2024-01-15 08:30:00'),
+('user002', 'varshitha@university.edu', 'varshitha', 'Varshitha', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5lk7yP5B2RzGi', 'Software Engineering student | Gym rat 💪 | Tech blogger', 1950, 8, 15, 3, 9, 12, 8.0, '2024-02-01 14:20:00'),
+('user003', 'deepthi@university.edu', 'deepthi', 'Deepthi', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5lk7yP5B2RzGi', 'Mathematics & AI | Research assistant | Night owl 🦉', 3420, 22, 35, 7, 10, 13, 7.0, '2023-11-20 10:45:00'),
+('user004', 'ram@university.edu', 'ram', 'Ram', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5lk7yP5B2RzGi', 'Business major | Entrepreneur | Productivity nerd 🚀', 1250, 5, 12, 2, 7, 10, 8.5, '2024-03-10 09:15:00'),
+('user005', 'ravi@university.edu', 'ravi', 'Ravi', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5lk7yP5B2RzGi', 'Design student | Creative coder | Book lover 📖', 2100, 12, 20, 4, 8, 11, 8.0, '2024-01-25 16:30:00');
+
+-- ============================================
+-- INSERT MOCK DATA - TASKS
+-- ============================================
+
+INSERT INTO tasks (id, user_id, title, description, category, priority, estimated_duration, actual_duration, cognitive_load, is_deep_work, completed, completed_at, order_index, created_at) VALUES
+('task001', 'user001', 'Complete Algorithm Assignment', 'Implement Dijkstra''s shortest path algorithm in Python', 'coding', 'urgent', 120, 135, 9, TRUE, TRUE, '2024-11-05 14:30:00', 1, '2024-11-04 09:00:00'),
+('task002', 'user001', 'Study for Data Structures Exam', 'Review trees, graphs, and dynamic programming', 'study', 'high', 180, NULL, 8, TRUE, FALSE, NULL, 2, '2024-11-05 08:00:00'),
+('task003', 'user001', 'Morning Workout', '30 min cardio + strength training', 'fitness', 'medium', 45, 50, 4, FALSE, TRUE, '2024-11-06 07:30:00', 3, '2024-11-06 06:00:00'),
+('task004', 'user001', 'Read Chapter 5 - OS Concepts', 'Process synchronization and deadlocks', 'reading', 'medium', 60, NULL, 7, TRUE, FALSE, NULL, 4, '2024-11-06 10:00:00'),
+('task005', 'user002', 'Build REST API for Project', 'Create user authentication endpoints using FastAPI', 'coding', 'high', 150, NULL, 8, TRUE, FALSE, NULL, 1, '2024-11-05 11:00:00'),
+('task006', 'user002', 'Write Blog Post', 'Tutorial on React hooks and state management', 'writing', 'low', 90, NULL, 6, TRUE, FALSE, NULL, 2, '2024-11-06 09:00:00'),
+('task007', 'user003', 'Linear Algebra Problem Set', 'Complete exercises 3.1 through 3.5', 'study', 'urgent', 120, 110, 9, TRUE, TRUE, '2024-11-05 18:00:00', 1, '2024-11-04 15:00:00'),
+('task008', 'user003', 'Research Paper Reading', 'Review latest papers on neural networks', 'reading', 'high', 120, NULL, 8, TRUE, FALSE, NULL, 2, '2024-11-06 11:00:00'),
+('task009', 'user004', 'Update Business Plan', 'Revise marketing strategy section', 'writing', 'high', 90, NULL, 6, FALSE, FALSE, NULL, 1, '2024-11-06 10:00:00'),
+('task010', 'user004', 'Team Meeting Prep', 'Prepare slides for startup pitch', 'organizing', 'medium', 60, NULL, 5, FALSE, FALSE, NULL, 2, '2024-11-06 13:00:00'),
+('task011', 'user005', 'Design Portfolio Website', 'Create mockups in Figma', 'creativity', 'high', 180, NULL, 7, TRUE, FALSE, NULL, 1, '2024-11-05 14:00:00'),
+('task012', 'user005', 'Read "Atomic Habits"', 'Chapters 6-8', 'reading', 'low', 45, NULL, 3, FALSE, FALSE, NULL, 2, '2024-11-06 19:00:00');
+
+-- ============================================
+-- INSERT MOCK DATA - SLEEP LOGS
+-- ============================================
+
+INSERT INTO sleep_logs (id, user_id, date, hours_slept, sleep_quality, notes, created_at) VALUES
+('sleep001', 'user001', '2024-11-04', 7.5, 4, 'Decent sleep, woke up once', '2024-11-05 07:00:00'),
+('sleep002', 'user001', '2024-11-05', 6.5, 3, 'Stayed up late finishing assignment', '2024-11-06 07:30:00'),
+('sleep003', 'user002', '2024-11-04', 8.0, 5, 'Excellent sleep!', '2024-11-05 07:00:00'),
+('sleep004', 'user002', '2024-11-05', 7.0, 4, 'Good rest', '2024-11-06 07:00:00'),
+('sleep005', 'user003', '2024-11-04', 6.0, 3, 'Late night research session', '2024-11-05 08:00:00'),
+('sleep006', 'user003', '2024-11-05', 7.5, 4, 'Better sleep tonight', '2024-11-06 09:00:00'),
+('sleep007', 'user004', '2024-11-04', 8.5, 5, 'Amazing sleep, feel refreshed', '2024-11-05 06:30:00'),
+('sleep008', 'user004', '2024-11-05', 8.0, 5, 'Another great night', '2024-11-06 06:30:00'),
+('sleep009', 'user005', '2024-11-04', 7.5, 4, 'Solid sleep', '2024-11-05 08:00:00'),
+('sleep010', 'user005', '2024-11-05', 8.0, 5, 'Well rested', '2024-11-06 08:00:00');
+
+-- ============================================
+-- INSERT MOCK DATA - USER SKILLS
+-- ============================================
+
+INSERT INTO user_skills (id, user_id, skill_name, category, total_hours, level, last_practiced, created_at) VALUES
+('skill001', 'user001', 'Python Programming', 'coding', 156.5, 8, '2024-11-06 14:30:00', '2024-01-15 08:30:00'),
+('skill002', 'user001', 'Data Structures', 'study', 89.0, 6, '2024-11-06 11:00:00', '2024-02-01 09:00:00'),
+('skill003', 'user001', 'Machine Learning', 'study', 45.5, 4, '2024-11-03 15:00:00', '2024-03-15 10:00:00'),
+('skill004', 'user002', 'JavaScript', 'coding', 203.0, 10, '2024-11-06 16:00:00', '2024-01-20 12:00:00'),
+('skill005', 'user002', 'React', 'coding', 112.5, 7, '2024-11-06 14:00:00', '2024-02-15 13:00:00'),
+('skill006', 'user002', 'Technical Writing', 'writing', 67.0, 5, '2024-11-05 18:00:00', '2024-03-01 10:00:00'),
+('skill007', 'user003', 'Linear Algebra', 'study', 198.5, 10, '2024-11-05 18:00:00', '2023-11-20 10:45:00'),
+('skill008', 'user003', 'Deep Learning', 'study', 145.0, 9, '2024-11-06 13:00:00', '2024-01-10 11:00:00'),
+('skill009', 'user004', 'Business Strategy', 'study', 78.5, 5, '2024-11-06 12:00:00', '2024-03-10 09:15:00'),
+('skill010', 'user004', 'Public Speaking', 'social', 34.0, 3, '2024-11-04 15:00:00', '2024-04-01 14:00:00'),
+('skill011', 'user005', 'UI/UX Design', 'creativity', 167.5, 9, '2024-11-06 17:00:00', '2024-01-25 16:30:00'),
+('skill012', 'user005', 'Figma', 'creativity', 134.0, 8, '2024-11-06 16:30:00', '2024-02-10 15:00:00');
+
+-- ============================================
+-- INSERT MOCK DATA - ACHIEVEMENTS
+-- ============================================
+
+INSERT INTO achievements (id, name, description, icon, category, points, requirement) VALUES
+('ach001', 'First Steps', 'Complete your first task', '🎯', 'tasks', 10, 'Complete 1 task'),
+('ach002', 'Task Master', 'Complete 50 tasks', '🏆', 'tasks', 100, 'Complete 50 tasks'),
+('ach003', 'Century Club', 'Complete 100 tasks', '💯', 'tasks', 250, 'Complete 100 tasks'),
+('ach004', 'Early Bird', 'Complete a task before 8 AM', '🌅', 'tasks', 25, 'Complete task before 8 AM'),
+('ach005', 'Night Owl', 'Complete a task after 10 PM', '🦉', 'tasks', 25, 'Complete task after 10 PM'),
+('ach006', 'Deep Focus', 'Complete 10 deep work sessions', '🧠', 'focus', 75, 'Complete 10 deep work tasks'),
+('ach007', 'Zen Master', 'Maintain a 7-day streak', '🔥', 'streaks', 50, 'Maintain 7-day streak'),
+('ach008', 'Unstoppable', 'Maintain a 30-day streak', '⚡', 'streaks', 200, 'Maintain 30-day streak'),
+('ach009', 'Well Rested', 'Log 7 days of 8+ hours sleep', '😴', 'health', 75, 'Log 7 days of 8+ hours sleep'),
+('ach010', 'Sleep Champion', 'Log 30 days of quality sleep', '🌙', 'health', 150, 'Log 30 days of quality sleep'),
+('ach011', 'Skill Builder', 'Reach level 5 in any skill', '📚', 'skills', 50, 'Reach level 5 in any skill'),
+('ach012', 'Expert', 'Reach level 10 in any skill', '🎓', 'skills', 200, 'Reach level 10 in any skill'),
+('ach013', 'Polymath', 'Have 5 different skills', '🌟', 'skills', 100, 'Track 5 different skills'),
+('ach014', 'Social Butterfly', 'Complete 10 social tasks', '🦋', 'social', 50, 'Complete 10 social tasks'),
+('ach015', 'Fitness Warrior', 'Complete 20 fitness tasks', '💪', 'fitness', 75, 'Complete 20 fitness tasks');
+
+-- ============================================
+-- INSERT MOCK DATA - USER ACHIEVEMENTS
+-- ============================================
+
+INSERT INTO user_achievements (id, user_id, achievement_id, unlocked_at) VALUES
+('uach001', 'user001', 'ach001', '2024-01-15 10:00:00'),
+('uach002', 'user001', 'ach002', '2024-06-20 15:30:00'),
+('uach003', 'user001', 'ach004', '2024-02-10 07:45:00'),
+('uach004', 'user001', 'ach006', '2024-08-15 18:00:00'),
+('uach005', 'user001', 'ach007', '2024-03-01 20:00:00'),
+('uach006', 'user001', 'ach011', '2024-05-10 14:30:00'),
+('uach007', 'user002', 'ach001', '2024-02-01 16:00:00'),
+('uach008', 'user002', 'ach002', '2024-07-15 12:00:00'),
+('uach009', 'user002', 'ach007', '2024-04-05 19:00:00'),
+('uach010', 'user003', 'ach001', '2023-11-21 09:00:00'),
+('uach011', 'user003', 'ach002', '2024-04-30 17:00:00'),
+('uach012', 'user003', 'ach003', '2024-09-15 14:00:00'),
+('uach013', 'user003', 'ach006', '2024-06-20 16:00:00'),
+('uach014', 'user003', 'ach007', '2024-01-15 21:00:00'),
+('uach015', 'user003', 'ach008', '2024-08-01 22:00:00'),
+('uach016', 'user003', 'ach011', '2024-03-20 13:00:00'),
+('uach017', 'user003', 'ach012', '2024-10-01 15:00:00'),
+('uach018', 'user004', 'ach001', '2024-03-10 11:00:00'),
+('uach019', 'user004', 'ach007', '2024-05-15 18:00:00'),
+('uach020', 'user005', 'ach001', '2024-01-25 18:00:00'),
+('uach021', 'user005', 'ach002', '2024-08-10 16:00:00'),
+('uach022', 'user005', 'ach011', '2024-07-05 14:00:00');
+
+-- ============================================
+-- INSERT MOCK DATA - CAMPUS EVENTS
+-- ============================================
+
+INSERT INTO campus_events (id, title, description, location, start_time, end_time, category, organizer, created_at) VALUES
+('event001', 'AI & Machine Learning Workshop', 'Hands-on workshop covering neural networks and deep learning basics', 'Engineering Building - Room 301', '2024-11-10 14:00:00', '2024-11-10 17:00:00', 'workshop', 'Computer Science Department', '2024-10-15 10:00:00'),
+('event002', 'Career Fair 2024', 'Meet with top tech companies and startups', 'Student Union - Main Hall', '2024-11-12 09:00:00', '2024-11-12 17:00:00', 'career', 'Career Services', '2024-10-01 09:00:00'),
+('event003', 'Hackathon: Code for Good', '24-hour hackathon focused on social impact projects', 'Innovation Lab', '2024-11-15 18:00:00', '2024-11-16 18:00:00', 'competition', 'Tech Student Association', '2024-10-20 11:00:00'),
+('event004', 'Mindfulness & Meditation Session', 'Weekly meditation session for stress relief', 'Wellness Center - Room 102', '2024-11-08 18:00:00', '2024-11-08 19:00:00', 'wellness', 'Student Health Services', '2024-09-01 08:00:00'),
+('event005', 'Guest Lecture: Future of Web Development', 'Industry expert discusses modern web technologies', 'Auditorium A', '2024-11-14 16:00:00', '2024-11-14 18:00:00', 'lecture', 'CS Club', '2024-10-25 14:00:00'),
+('event006', 'Study Group: Algorithms & Data Structures', 'Weekly study group for CS students', 'Library - Study Room 5', '2024-11-09 15:00:00', '2024-11-09 17:00:00', 'study', 'Student Study Groups', '2024-09-15 12:00:00'),
+('event007', 'Startup Pitch Competition', 'Present your startup idea for a chance to win funding', 'Business School - Auditorium', '2024-11-20 13:00:00', '2024-11-20 17:00:00', 'competition', 'Entrepreneurship Center', '2024-10-05 10:00:00'),
+('event008', 'Campus Yoga Class', 'Free yoga class for all students', 'Recreation Center - Studio B', '2024-11-07 07:00:00', '2024-11-07 08:00:00', 'fitness', 'Campus Recreation', '2024-09-01 08:00:00'),
+('event009', 'Book Club: Tech & Society', 'Discussing "The Age of Surveillance Capitalism"', 'Campus Coffee Shop', '2024-11-13 19:00:00', '2024-11-13 20:30:00', 'social', 'Philosophy Club', '2024-10-18 15:00:00'),
+('event010', 'Python Programming Workshop', 'Beginner-friendly Python workshop', 'Computer Lab - Building C', '2024-11-11 14:00:00', '2024-11-11 16:00:00', 'workshop', 'Coding Bootcamp Initiative', '2024-10-22 11:00:00');
+
+-- ============================================
+-- USEFUL QUERIES
+-- ============================================
+
+-- Get user's task statistics
+-- SELECT 
+--     COUNT(*) as total_tasks,
+--     SUM(CASE WHEN completed = TRUE THEN 1 ELSE 0 END) as completed_tasks,
+--     AVG(CASE WHEN completed = TRUE THEN cognitive_load END) as avg_cognitive_load
+-- FROM tasks
+-- WHERE user_id = 'user001';
+
+-- Get user's sleep debt
+-- SELECT 
+--     SUM(8.0 - hours_slept) as sleep_debt
+-- FROM sleep_logs
+-- WHERE user_id = 'user001' 
+--   AND date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY);
+
+-- Get top skills by hours practiced
+-- SELECT skill_name, category, total_hours, level
+-- FROM user_skills
+-- WHERE user_id = 'user001'
+-- ORDER BY total_hours DESC;
+
+-- Get upcoming campus events
+-- SELECT title, location, start_time, category
+-- FROM campus_events
+-- WHERE start_time >= NOW()
+-- ORDER BY start_time ASC
+-- LIMIT 10;
+
+-- Get user's unlocked achievements
+-- SELECT a.name, a.description, a.icon, a.points, ua.unlocked_at
+-- FROM user_achievements ua
+-- JOIN achievements a ON ua.achievement_id = a.id
+-- WHERE ua.user_id = 'user001'
+-- ORDER BY ua.unlocked_at DESC;
+

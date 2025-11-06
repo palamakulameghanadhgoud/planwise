@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+motor
+pymongo
+pydantic
+pydantic-settings
+python-jose[cryptography]
+python-multipart
+python-dotenv
+email-validator
+bcrypt
+authlib
+httpx
+
