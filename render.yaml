@@ -43,15 +43,13 @@ services:
         sync: false
 
   # Frontend Static Site
-  - type: web
+  - type: static
     name: planwise-frontend
-    runtime: node
-    region: oregon
-    plan: free
-    branch: main
-    rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
+    pullRequestPreviewsEnabled: true
+    branch: main
+    rootDir: frontend
     envVars:
       - key: NODE_VERSION
         value: 18.17.0
